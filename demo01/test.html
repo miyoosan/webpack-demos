@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+    .box {
+      width: 300px;
+      height: 200px;
+    }
+    .red {
+      background-color: red;
+    }
+    .green {
+      background-color: green;
+    }
+    .yellow {
+      background-color: yellow;
+    }
+    </style>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+    var TweetBox = React.createClass({
+      getInitialState: function () {
+        return {
+          text: "",
+          html: "我是输入框的初始状态",
+          status: "off",
+          overwrite: false
+        };
+      },
+      handleChange: function(event) {
+        // alert("输入框状态发生了改变，当前内容为："+event.target.value);
+        this.setState({
+          text: event.target.value,
+          html: "【输入框状态】我的值会发生变化，但只在状态改变的时候，才会发生改变，上次状态改变的时间为："+new Date().getTime()
+        });
+      },
+      handleChangeButton: function(event) {
+        this.setState({
+          status: (this.state.status === "on" ? "off" : "on")
+        });
+      },
+      remainingCharacters: function () {
+        return 140-this.state.text.length-((this.state.status === "on") ? 23 : 0);
+      },
+      overflowAlert: function () {
+        if (this.remainingCharacters() < 0) {
+          var preOverflowTxt = this.state.text.substring(130, 140);
+          var overflowTxt = this.state.text.substring(140);
+          return (
+            <div>
+            对不起，输入字数已超出最大长度：...{preOverflowTxt}<span className="yellow">{overflowTxt}</span>
+            </div>
+          );
+        }
+        },
+      render: function () {
+        return (
+          <div>
+          <textarea className="box" onChange={this.handleChange}></textarea>
+          <button className="green" onClick={this.handleChangeButton}>{ (this.state.status === "on") ? "√ 添加图片" : "添加按钮" }</button>
+          <button className="red" disabled={ this.state.text.length === 0 && this.state.status === "off"}>
+            hello world<br />
+            wellcome to react
+          </button>
+          <span>剩余最大可输入字数为 { this.remainingCharacters() }</span><br />
+          { this.overflowAlert() }<br />
+          {this.state.text}<br />
+          {this.state.html}
+          {this.props.child}
+          </div>
+        );
+      }
+    });
+
+    var Test = React.createClass({
+      getInitialState: function () {
+        return {
+          status: 0
+        };
+      },
+      componentWillMount: function () {
+        this.setState({
+          status: 1
+        });
+      },
+      componentDidMount: function () {
+        this.setState({
+          status: 2
+        });
+      },
+      render: function () {
+        return (
+          <button>{this.state.status}aaaa</button>
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <TweetBox class="world" for="hello" />,
+      document.body
+    );
+    ReactDOM.render(
+      <Test />,
+      document.getElementById("example")
+    );
+    </script>
+  </body>
+</html>
